@@ -9,6 +9,7 @@ Pong.Game.prototype.preload =  function() {
 }
 
 Pong.Game.prototype.create = function() {
+
   this.game.input.keyboard.addKeyCapture([
     Phaser.Keyboard.UP,
     Phaser.Keyboard.DOWN
@@ -22,26 +23,13 @@ Pong.Game.prototype.create = function() {
   this.player2.x = this.game.width - this.player2.width;
   this.player2.y = Pong.Utils.center(this.game.height, this.player1.height);
 
+  this.player1.speed = this.player2.speed = 250;
+
+  this.player1.setMode('VERTICAL', Phaser.Keyboard.W, Phaser.Keyboard.S);
+  this.player2.setMode('VERTICAL', Phaser.Keyboard.UP, Phaser.Keyboard.DOWN);
+
 }
 
 Pong.Game.prototype.update = function() {
-  var isDown = this.input.keyboard.isDown;
-  var velocity = 300 * this.game.time.elapsed / 1000;
-
-  if (this.input.keyboard.isDown(Phaser.Keyboard.W)) {
-    this.player1.y -= velocity;
-  }
-
-  if (this.input.keyboard.isDown(Phaser.Keyboard.S)) {
-    this.player1.y += velocity;
-  }
-
-  if (this.input.keyboard.isDown(Phaser.Keyboard.UP)){
-    this.player2.y -= velocity;
-  }
-
-  if (this.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-    this.player2.y += velocity;
-  }
 
 }
