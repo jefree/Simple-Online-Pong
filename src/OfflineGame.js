@@ -32,4 +32,8 @@ Pong.Game.prototype.create = function() {
 
 Pong.Game.prototype.update = function() {
 
-}
+  if (Pong.Utils.intersect(this.player1, this.player2)) {
+    console.log('collision');
+  }
+
+} 

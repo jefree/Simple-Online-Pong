@@ -4,9 +4,10 @@ Pong.Player = function(game, x, y, key, frame) {
   Phaser.Sprite.call(this, game, x, y, key, frame);
   game.add.existing(this);
 
-  this.movement = 'VERTICAL';
+  this.mode = 'VERTICAL';
   this.actions = {};
   this.spedd = 0;
+
 }
 
 Pong.Player.MODES = ['VERTICAL', 'HORIZONTAL'];
@@ -16,20 +17,22 @@ Pong.Player.prototype.constructor = Pong.Player;
 
 Pong.Player.prototype.update = function() {
 
-  if (this.movement == 'VERTICAL') {
+  if (this.mode == 'VERTICAL') {
     this._processMovemet('y', this.height, this.game.height);
   }
 
-  else if (this.movement = 'HORIZONTAL') {
+  else if (this.mode == 'HORIZONTAL') {
     this._processMovemet('x', this.width, this.game.width);
   }
 }
 
 Pong.Player.prototype.setMode = function(mode, fk, bk) {
-  if (! (mode in Pong.Player.MODES)){
+
+  if (Pong.Player.MODES.indexOf(mode) == -1){
     mode = 'VERTICAL';
   }
 
+  this.mode = mode;
   this.forwardKey = fk; 
   this.backwardKey = bk;
 }
