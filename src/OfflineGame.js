@@ -16,6 +16,8 @@ Pong.Game.prototype.create = function() {
     Phaser.Keyboard.DOWN
   ]);
 
+  this.game.stage.backgroundColor = '#0000FF';
+
   //create players
 
   this.player1 = new Pong.Player(this.game, 0, 0, 'paddle');
@@ -34,23 +36,28 @@ Pong.Game.prototype.create = function() {
   // create ball
 
   this.ball = new Pong.Ball(this.game, 0, 0, 'ball');
-  this.ball.speed.x = 100;
-  this.ball.speed.y = 100;
+  this.ball.speed.x = 250;
+  this.ball.speed.y = 250;
   this.ball.x = Pong.Utils.center(this.game.width, this.ball.width);
   this.ball.y = Pong.Utils.center(this.game.height, this.ball.height);
 }
 
 Pong.Game.prototype.update = function() {
 
-  if (Pong.Utils.intersect(this.player1, this.ball) ||
-      Pong.Utils.intersect(this.player2, this.ball)) 
-  {
+  var ballBody = Pong.Utils.createBody(this.ball);
 
-    //console.log('heeeee')
-
-    this.ball.speed.x *= -1;
+  if (ballBody.bottom >= this.game.height) {
     this.ball.speed.y *= -1;
+  }
 
+  if (ballBody.top <= 0) {
+    this.ball.speed.y *= -1;
+  }
+
+  if (Pong.Utils.intersect(this.ball, this.player1) ||
+      Pong.Utils.intersect(this.ball, this.player2)) 
+  {
+    this.ball.speed.x *= -1;
   }
 
 } 

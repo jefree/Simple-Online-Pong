@@ -16,11 +16,11 @@ Pong.Utils.intersect = function(sprite1, sprite2) {
     return false;
   }
 
-  if (body1.bottom <= body2.top) {
+  if (body1.left >= body2.right) {
     return false;
   }
 
-  if (body1.left >= body2.right) {
+  if (body1.bottom <= body2.top) {
     return false;
   }
 
@@ -29,14 +29,6 @@ Pong.Utils.intersect = function(sprite1, sprite2) {
   }
 
   return true;
-}
-
-Pong.Utils.collide = function(sprite1, sprite2) {
-  
-  var body1 = Pong.Utils.createBody(sprite1);
-  var body2 = Pong.Utils.createBody(sprite2);
-
-  
 }
 
 Pong.Utils.createBody = function(sprite) {
