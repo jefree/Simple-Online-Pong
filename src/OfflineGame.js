@@ -33,16 +33,40 @@ Pong.Game.prototype.create = function() {
   this.player1.setMode('VERTICAL', Phaser.Keyboard.W, Phaser.Keyboard.S);
   this.player2.setMode('VERTICAL', Phaser.Keyboard.UP, Phaser.Keyboard.DOWN);
 
-  // create ball
+  this.initTimerText = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '3', {fontSize: '25pt'});
+  this.initTimerText.anchor.set(0.5, 0.5);
 
-  this.ball = new Pong.Ball(this.game, 0, 0, 'ball');
-  this.ball.speed.x = 250;
-  this.ball.speed.y = 250;
-  this.ball.x = Pong.Utils.center(this.game.width, this.ball.width);
-  this.ball.y = Pong.Utils.center(this.game.height, this.ball.height);
+  var times = 3;
+  this.playing = false;
+
+  this.initTimer = this.game.time.create(true);
+  this.initTimer.repeat(1000, times, function(arg){
+    times -= 1;
+    
+    this.initTimerText.text = times+'';
+
+    if (times == 0) {
+
+      // create ball
+      
+      this.ball = new Pong.Ball(this.game, 0, 0, 'ball');
+      this.ball.speed.x = 250;
+      this.ball.speed.y = 250;
+      this.ball.x = Pong.Utils.center(this.game.width, this.ball.width);
+      this.ball.y = Pong.Utils.center(this.game.height, this.ball.height);
+
+      this.initTimerText.destroy(true);
+
+      this.playing = true;
+    }
+  }, this);
+
+  this.initTimer.start();
 }
 
 Pong.Game.prototype.update = function() {
+
+  if (!this.playing) return;
 
   var ballBody = Pong.Utils.createBody(this.ball);
 

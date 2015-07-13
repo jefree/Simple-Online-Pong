@@ -19,6 +19,4 @@ Pong.Ball.prototype.update = function() {
 
   this.x += this.speed.x * delta / 1000;
   this.y += this.speed.y * delta / 1000;
-
-  console.log(this.speed)
 }
