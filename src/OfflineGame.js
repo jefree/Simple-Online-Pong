@@ -50,8 +50,8 @@ Pong.Game.prototype.create = function() {
       // create ball
       
       this.ball = new Pong.Ball(this.game, 0, 0, 'ball');
-      this.ball.speed.x = 250;
-      this.ball.speed.y = 250;
+      this.ball.speed.x = Math.random() < 0.5 ? 250 : -250;
+      this.ball.speed.y = Math.random() < 0.5 ? 250 : -250;
       this.ball.x = Pong.Utils.center(this.game.width, this.ball.width);
       this.ball.y = Pong.Utils.center(this.game.height, this.ball.height);
 
