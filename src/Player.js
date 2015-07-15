@@ -39,7 +39,7 @@ Pong.Player.prototype.setMode = function(mode, fk, bk) {
 
 Pong.Player.prototype._processMovemet = function(axis, size, limit) {
 
-  var speed = this.speed * this.game.time.elapsed / 1000 ;
+  var speed = this.speed * this.game.time.physicsElapsed;
   
   if (this.game.input.keyboard.isDown(this.forwardKey)) {
     this[axis] -= speed;

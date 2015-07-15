@@ -6,7 +6,6 @@ Pong.Utils.center = function(pw, cw) {
   return pw/2 - cw/2;
 }
 
-
 Pong.Utils.intersect = function(sprite1, sprite2) {
 
   var body1 = Pong.Utils.createBody(sprite1);

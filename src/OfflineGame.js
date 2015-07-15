@@ -7,6 +7,8 @@ Pong.Game = function() {
 Pong.Game.prototype.preload =  function() {
   this.load.image('paddle', 'src/assets/images/paddle.png');
   this.load.image('ball', 'src/assets/images/ball.png');
+
+  this.game.time.advancedTiming = true;
 }
 
 Pong.Game.prototype.create = function() {
@@ -36,32 +38,7 @@ Pong.Game.prototype.create = function() {
   this.initTimerText = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '3', {fontSize: '25pt'});
   this.initTimerText.anchor.set(0.5, 0.5);
 
-  var times = 3;
-  this.playing = false;
-
-  this.initTimer = this.game.time.create(true);
-  this.initTimer.repeat(1000, times, function(arg){
-    times -= 1;
-    
-    this.initTimerText.text = times+'';
-
-    if (times == 0) {
-
-      // create ball
-      
-      this.ball = new Pong.Ball(this.game, 0, 0, 'ball');
-      this.ball.speed.x = Math.random() < 0.5 ? 250 : -250;
-      this.ball.speed.y = Math.random() < 0.5 ? 250 : -250;
-      this.ball.x = Pong.Utils.center(this.game.width, this.ball.width);
-      this.ball.y = Pong.Utils.center(this.game.height, this.ball.height);
-
-      this.initTimerText.destroy(true);
-
-      this.playing = true;
-    }
-  }, this);
-
-  this.initTimer.start();
+  this.beginGame();
 }
 
 Pong.Game.prototype.update = function() {
@@ -69,6 +46,11 @@ Pong.Game.prototype.update = function() {
   if (!this.playing) return;
 
   var ballBody = Pong.Utils.createBody(this.ball);
+
+  var amount = this.game.time.physicsElapsed * 5;
+
+  this.ball.speed.x += this.ball.speed.x > 0 ? amount : - amount;
+  this.ball.speed.y += this.ball.speed.y > 0 ? amount : - amount;
 
   if (ballBody.bottom >= this.game.height) {
     this.ball.speed.y *= -1;
@@ -84,4 +66,43 @@ Pong.Game.prototype.update = function() {
     this.ball.speed.x *= -1;
   }
 
-} 
+}
+
+Pong.Game.prototype.render = function() {
+  this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00FF00");
+}
+
+Pong.Game.prototype.beginGame = function() {
+  var times = 3;
+  this.playing = false;
+
+  this.initTimer = this.game.time.create(true);
+  this.initTimer.repeat(1000, times, function(arg){
+    times -= 1;
+    
+    this.initTimerText.text = times+'';
+
+    if (times == 0) {
+
+      // create ball
+      
+      this.ball = new Pong.Ball(this.game, 0, 0, 'ball');
+      this.putBall();
+
+      this.initTimerText.destroy(true);
+
+      this.playing = true;
+    }
+  }, this);
+
+  this.initTimer.start();
+}
+
+Pong.Game.prototype.putBall = function() {
+  this.ball.speed.x = Math.random() < 0.5 ? 250 : -250;
+  this.ball.speed.y = Math.random() < 0.5 ? 250 : -250;
+  this.ball.x = Pong.Utils.center(this.game.width, this.ball.width);
+  this.ball.y = Pong.Utils.center(this.game.height, this.ball.height);
+}
+
+
