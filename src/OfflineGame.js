@@ -35,8 +35,11 @@ Pong.Game.prototype.create = function() {
   this.player1.setMode('VERTICAL', Phaser.Keyboard.W, Phaser.Keyboard.S);
   this.player2.setMode('VERTICAL', Phaser.Keyboard.UP, Phaser.Keyboard.DOWN);
 
-  this.initTimerText = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '3', {fontSize: '25pt'});
-  this.initTimerText.anchor.set(0.5, 0.5);
+  this.player1Score = this.game.add.text(15,15, '0');
+  this.player2Score = this.game.add.text(this.game.width-30, 15, '0');
+
+  this.player1.score = 0;
+  this.player2.score = 0;
 
   this.beginGame();
 }
@@ -49,7 +52,7 @@ Pong.Game.prototype.update = function() {
 
   var amount = this.game.time.physicsElapsed * 5;
 
-  if (Math.abs(this.ball.speed.x) < 400) { 
+  if (Math.abs(this.ball.speed.x) < 500) { 
     this.ball.speed.x += this.ball.speed.x > 0 ? amount : - amount;
     this.ball.speed.y += this.ball.speed.y > 0 ? amount : - amount;
   }
@@ -62,12 +65,24 @@ Pong.Game.prototype.update = function() {
     this.ball.speed.y *= -1;
   }
 
+  if (ballBody.left < this.player1.width/2) {
+    this.player2.score += 1;
+    this.player2Score.text = this.player2.score+'';
+    this.putBall();
+    this.ball.speed.x = Math.abs(this.ball.speed.x);
+  }
+  else if (ballBody.right > this.game.width - this.player2.width/2) {
+    this.player1.score += 1;
+    this.player1Score.text = this.player2.score+'';
+    this.putBall();
+    this.ball.speed.x = - Math.abs(this.ball.speed.x);
+  }
+
   if (Pong.Utils.intersect(this.ball, this.player1) ||
       Pong.Utils.intersect(this.ball, this.player2)) 
   {
     this.ball.speed.x *= -1;
   }
-
 }
 
 Pong.Game.prototype.render = function() {
@@ -77,6 +92,9 @@ Pong.Game.prototype.render = function() {
 Pong.Game.prototype.beginGame = function() {
   var times = 3;
   this.playing = false;
+
+  this.initTimerText = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '3', {fontSize: '25pt'});
+  this.initTimerText.anchor.set(0.5, 0.5);
 
   this.initTimer = this.game.time.create(true);
   this.initTimer.repeat(1000, times, function(arg){
