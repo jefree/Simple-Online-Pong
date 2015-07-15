@@ -49,8 +49,10 @@ Pong.Game.prototype.update = function() {
 
   var amount = this.game.time.physicsElapsed * 5;
 
-  this.ball.speed.x += this.ball.speed.x > 0 ? amount : - amount;
-  this.ball.speed.y += this.ball.speed.y > 0 ? amount : - amount;
+  if (Math.abs(this.ball.speed.x) < 400) { 
+    this.ball.speed.x += this.ball.speed.x > 0 ? amount : - amount;
+    this.ball.speed.y += this.ball.speed.y > 0 ? amount : - amount;
+  }
 
   if (ballBody.bottom >= this.game.height) {
     this.ball.speed.y *= -1;
