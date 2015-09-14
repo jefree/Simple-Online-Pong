@@ -1,17 +1,17 @@
 var Pong = Pong || {};
 
-Pong.Game = function() {
+Pong.OfflineGame = function() {
 
 }
 
-Pong.Game.prototype.preload =  function() {
+Pong.OfflineGame.prototype.preload =  function() {
   this.load.image('paddle', 'src/assets/images/paddle.png');
   this.load.image('ball', 'src/assets/images/ball.png');
 
   this.game.time.advancedTiming = true;
 }
 
-Pong.Game.prototype.create = function() {
+Pong.OfflineGame.prototype.create = function() {
 
   this.game.input.keyboard.addKeyCapture([
     Phaser.Keyboard.UP,
@@ -44,7 +44,7 @@ Pong.Game.prototype.create = function() {
   this.beginGame();
 }
 
-Pong.Game.prototype.update = function() {
+Pong.OfflineGame.prototype.update = function() {
 
   if (!this.playing) return;
 
@@ -85,11 +85,11 @@ Pong.Game.prototype.update = function() {
   }
 }
 
-Pong.Game.prototype.render = function() {
+Pong.OfflineGame.prototype.render = function() {
   this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00FF00");
 }
 
-Pong.Game.prototype.beginGame = function() {
+Pong.OfflineGame.prototype.beginGame = function() {
   var times = 3;
   this.playing = false;
 
@@ -118,7 +118,7 @@ Pong.Game.prototype.beginGame = function() {
   this.initTimer.start();
 }
 
-Pong.Game.prototype.putBall = function() {
+Pong.OfflineGame.prototype.putBall = function() {
   this.ball.speed.x = Math.random() < 0.5 ? 250 : -250;
   this.ball.speed.y = Math.random() < 0.5 ? 250 : -250;
   this.ball.x = Pong.Utils.center(this.game.width, this.ball.width);
