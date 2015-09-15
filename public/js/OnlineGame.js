@@ -13,11 +13,12 @@ Pong.OnlineGame = function() {
     {x: GAME_WIDHT-30, y: GAME_HEIGHT-100, w: 30, h: 100}
   ];
 
-
   /**
    * export public variables
    */
    this.PLAYER_DATA = PLAYER_DATA;
+   this.player = null;  //player controlled the user
+   this.connManager = new ConnManager(this);  //manager for the connection with the server
 }
 
 //same as in the server side 
@@ -29,19 +30,22 @@ Pong.OnlineGame.prototype.preload = function() {
 }
 
 Pong.OnlineGame.prototype.create = function() {
-  var self = this;
 
   //set the background color por the game
   this.game.stage.backgroundColor = '#0000FF';
 
   /* Create the players for the game */
-  self.players = [];
+  this.players = [];
 
-  self.PLAYER_DATA
+  this.PLAYER_DATA
   .forEach(function(data, index){
     //create one player for each player slot
-    self.players.push(new Pong.Player(self.game, data, index));
-  });
+    var player = new Pong.Player(this.game, data, index);
+    player.alpha = 0.5; //all players are disable until the server assign a slot to it 
+    this.players.push(player);
+  }.bind(this));
+
+  this.connManager.connect();
 }
 
 Pong.OnlineGame.prototype.update = function() {

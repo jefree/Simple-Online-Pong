@@ -41,7 +41,7 @@ function Game() {
 
     players.push(player);
 
-    player.socket.emit('welcome', {msg: 'welcome to the game '+id});
+    player.socket.emit('welcome', {freeSlot: freeSlot});
   }
 
   function start(){
