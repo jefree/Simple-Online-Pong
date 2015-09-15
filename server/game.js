@@ -3,8 +3,8 @@ var Player = require('./player.js')
 /**
  * Game constants
  */
-var GAME_WIDHT = 500;
-var GAME_HEIGHT = 500;
+var GAME_WIDHT = 640;
+var GAME_HEIGHT = 480;
 
 /*
  * Data for each available player slot into the game. 
