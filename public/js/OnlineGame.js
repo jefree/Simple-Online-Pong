@@ -17,8 +17,9 @@ Pong.OnlineGame = function() {
    * export public variables
    */
    this.PLAYER_DATA = PLAYER_DATA;
-   this.player = null;  //player controlled the user
    this.connManager = new ConnManager(this);  //manager for the connection with the server
+   this.player = null;  //player controlled the user
+   this.players = []; //players in game
 }
 
 //same as in the server side 

@@ -9,10 +9,25 @@ function Player(data, socket, game) {
   var width = data.width;
   var height = data.height;
 
+  function getState(){
+    return {
+      x: x,
+      y: y,
+      w: width,
+      h: height,
+      c: socket != null 
+    };
+  }
+
   /**
    * export public vars and methods
    */
-  this.socket = socket;
+  Object.defineProperty(this, 'socket', {
+    get: function() { return socket; },
+    set: function(s) { socket = s; }
+   });
+  
+  this.getState = getState;
 
 }
 

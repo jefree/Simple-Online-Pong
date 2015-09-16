@@ -24,7 +24,10 @@ function Game() {
 
   var id = idCounter++;
   var players = [];
-  var freeSlots = [0,1];
+
+  PLAYER_DATA.forEach(function(data){
+    players.push(new Player(data, null, this));
+  }.bind(this));
 
   /**
    * add a new player to this game. set the initial data for it.
@@ -35,13 +38,23 @@ function Game() {
   function addPlayer(socket) {
     console.log('new player in game ', id)
 
-    var freeSlot = freeSlots.shift();
-    var data = PLAYER_DATA[freeSlot];
-    var player = new Player(data, socket, this);
+    var player = null;
+    var slot = -1;
 
-    players.push(player);
+    /* find an available slot for the new player */
+    for(var i=0; i<players.length; i++){
+      if (players[i].socket == null){
+        player = players[i];
+        slot = i;
+        break;
+      }
+    }
 
-    player.socket.emit('welcome', {freeSlot: freeSlot});
+    player.socket = socket;
+
+    var gameState = getGameState();
+    gameState.slot = slot;
+    player.socket.emit('welcome', gameState);
   }
 
   function start(){
@@ -53,10 +66,37 @@ function Game() {
   }
 
   /**
+   * return a object with full state for the game
+   */
+  function getGameState() {
+
+    var state = {};
+    state.players = [];
+
+    players.forEach(function(player, index){
+      if (player.socket != null){
+        pState = player.getState();
+        pState.slot = index;
+        state.players.push(pState);
+      }
+    });
+
+    return state;
+  }
+
+  /**
    * return true if the game has one player for each available slot.
    */
   function isFull() {
-    return freeSlots.length == 0;
+    var freeSlots = 0;
+
+    players.forEach(function(player) {
+      if (player.socket == null){
+        freeSlots++;
+      }
+    });
+
+    return freeSlots == 0;
   }
 
   /**
