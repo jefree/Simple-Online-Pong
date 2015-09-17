@@ -84,4 +84,5 @@ Pong.OnlineGame.prototype.update = function() {
 Pong.OnlineGame.prototype.render = function() {
   //show current fps
   this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00FF00");
+  this.game.debug.text(this.serverTime && this.serverTime.toFixed(2) || '--', 500, 14, "#00FF00");
 }

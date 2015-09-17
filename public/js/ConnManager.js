@@ -11,6 +11,7 @@ function ConnManager(game) {
       //set the player that this user will control
       game.player = game.players[gameState.slot];
       game.player.socket = socket;
+      game.serverTime = gameState.gameTime;
 
       //update all players
       applyUpdate(gameState);
@@ -36,6 +37,9 @@ function ConnManager(game) {
   }
 
   function applyUpdate(gameState){
+
+    game.serverTime = gameState.gameTime;
+
     gameState.players.forEach(function(playerData){
       //update the info for the player if connected
       var player = game.players[playerData.slot];

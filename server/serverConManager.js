@@ -13,10 +13,10 @@ function ServerConManager(game){
         player.vy = 0;
       }
       else if (inputData.key == 'UP') {
-        player.vy = -1;
+        player.vy = -100;
       }
       else if (inputData.key == 'DOWN') {
-        player.vy = 1;
+        player.vy = 100;
       }
     });
 

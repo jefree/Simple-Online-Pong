@@ -24,6 +24,8 @@ function Game() {
   console.log('new game ', idCounter);
 
   var id = idCounter++;
+  var gameTime = 0;
+  var lastTime = -1;
   var players = [];
   var connManager = new ServerConManager(this);
 
@@ -55,12 +57,21 @@ function Game() {
 
   /**
    * Physics loop. update the position for each player according
-   * to its current velocity
+   * to its current velocity. increase game time.
    */
   function physicsLoop() {
+    if (lastTime == -1) {
+      lastTime = Date.now();
+      return;
+    }
+
+    var delta = (Date.now() - lastTime) / 1000;
+    lastTime = Date.now();
+    gameTime += delta;
+
     players.forEach(function(player){
       if (player.socket != null){
-        player.update();
+        player.update(delta);
       }
     });
   }
@@ -131,6 +142,8 @@ function Game() {
         state.players.push(pState);
       }
     });
+
+    state.gameTime = gameTime;
 
     return state;
   }

@@ -12,9 +12,9 @@ function Player(data, socket, game) {
   var vx = 0;
   var vy = 0;
 
-  function update() {
-    x += vx;
-    y += vy;
+  function update(delta) {
+    x += vx * delta;
+    y += vy * delta;
   }
 
   function getData(){
