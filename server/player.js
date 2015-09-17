@@ -9,7 +9,7 @@ function Player(data, socket, game) {
   var width = data.width;
   var height = data.height;
 
-  function getState(){
+  function getData(){
     return {
       x: x,
       y: y,
@@ -27,7 +27,7 @@ function Player(data, socket, game) {
     set: function(s) { socket = s; }
    });
   
-  this.getState = getState;
+  this.getData = getData;
 
 }
 

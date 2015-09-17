@@ -38,23 +38,37 @@ function Game() {
   function addPlayer(socket) {
     console.log('new player in game ', id)
 
-    var player = null;
+    var newPlayer = null;
     var slot = -1;
 
-    /* find an available slot for the new player */
-    for(var i=0; i<players.length; i++){
+    // find an available slot for the new player
+    for (var i=0; i<players.length; i++){
       if (players[i].socket == null){
-        player = players[i];
+        newPlayer = players[i];
         slot = i;
         break;
       }
     }
 
-    player.socket = socket;
+    //assign socket to player
+    newPlayer.socket = socket;
 
+    //emit welcome for the new player
     var gameState = getGameState();
     gameState.slot = slot;
-    player.socket.emit('welcome', gameState);
+    newPlayer.socket.emit('welcome', gameState);
+
+    // emit player event for all others active players
+    var newPlayerData = newPlayer.getData();
+    newPlayerData.slot = slot;
+
+    for (var i=0; i<players.length; i++){
+      var player = players[0];
+      
+      if (player.socket != null && i != slot) {
+        player.socket.emit('player', newPlayerData);
+      }
+    }
   }
 
   function start(){
@@ -75,7 +89,7 @@ function Game() {
 
     players.forEach(function(player, index){
       if (player.socket != null){
-        pState = player.getState();
+        pState = player.getData();
         pState.slot = index;
         state.players.push(pState);
       }

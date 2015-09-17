@@ -6,6 +6,8 @@ function ConnManager(game) {
     socket = io('http://localhost:8080', {reconnection: false});
 
     socket.on('welcome', function(gameState){
+      console.log('now im connected')
+
       //set the player that this user will control
       game.player = game.players[gameState.slot];
 
@@ -19,8 +21,13 @@ function ConnManager(game) {
 
     });
 
-    socket.on('player', function(data) {
-      
+    socket.on('player', function(playerData) {
+      console.log('new player')
+
+      //active the player for the new user
+      var player = game.players[playerData.slot];
+      player.setData(playerData);
+      player.alpha = 1.0;
     });
 
     socket.on('start', function(data){
