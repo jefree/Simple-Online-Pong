@@ -40,8 +40,10 @@ function Manager() {
     //free game didnt found, create new one
     if (!game) {
       game = new Game();
+      game.init();
       games.push(game);
     }
+
 
     return game;
   }

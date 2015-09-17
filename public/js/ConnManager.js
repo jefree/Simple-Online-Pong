@@ -12,12 +12,7 @@ function ConnManager(game) {
       game.player = game.players[gameState.slot];
 
       //update all players
-      gameState.players.forEach(function(playerData){
-        //update the info for the player if connected
-        var player = game.players[playerData.slot];
-        player.alpha = 1.0;
-        player.setData(playerData);
-      });
+      applyUpdate(gameState);
 
     });
 
@@ -32,6 +27,20 @@ function ConnManager(game) {
 
     socket.on('start', function(data){
       console.log(data.msg);
+    });
+
+    socket.on('update', function(gameState) {
+      console.log('update');
+      applyUpdate(gameState);
+    });
+  }
+
+  function applyUpdate(gameState){
+    gameState.players.forEach(function(playerData){
+      //update the info for the player if connected
+      var player = game.players[playerData.slot];
+      player.alpha = 1.0;
+      player.setData(playerData);
     });
   }
 

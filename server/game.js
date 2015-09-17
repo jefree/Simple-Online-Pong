@@ -29,6 +29,27 @@ function Game() {
     players.push(new Player(data, null, this));
   }.bind(this));
 
+
+  /**
+   * Create the loops for this game
+   */
+  function init() {
+    setInterval(updateLoop, 45);  //send updates to clients every 45ms
+  }
+
+  /**
+   * The update loop. Send current game state to all players
+   */
+  function updateLoop() {
+    var gameState = getGameState();
+
+    players.forEach(function(player){
+      if (player.socket != null){
+        player.socket.emit('update', gameState);
+      }
+    });
+  }
+
   /**
    * add a new player to this game. set the initial data for it.
    *
@@ -64,7 +85,7 @@ function Game() {
 
     for (var i=0; i<players.length; i++){
       var player = players[0];
-      
+
       if (player.socket != null && i != slot) {
         player.socket.emit('player', newPlayerData);
       }
@@ -118,6 +139,7 @@ function Game() {
    */
   this.addPlayer = addPlayer;
   this.isFull = isFull;
+  this.init = init;
   this.start = start;
 }
 
