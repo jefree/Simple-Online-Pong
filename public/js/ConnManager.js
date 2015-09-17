@@ -10,6 +10,7 @@ function ConnManager(game) {
 
       //set the player that this user will control
       game.player = game.players[gameState.slot];
+      game.player.socket = socket;
 
       //update all players
       applyUpdate(gameState);
@@ -30,7 +31,6 @@ function ConnManager(game) {
     });
 
     socket.on('update', function(gameState) {
-      console.log('update');
       applyUpdate(gameState);
     });
   }

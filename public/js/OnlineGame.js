@@ -17,6 +17,10 @@ Pong.OnlineGame = function() {
    * export public variables
    */
    this.PLAYER_DATA = PLAYER_DATA;
+   
+   this.KEY_UP = Phaser.Keyboard.UP;
+   this.KEY_DOWN = Phaser.Keyboard.DOWN;
+
    this.connManager = new ConnManager(this);  //manager for the connection with the server
    this.player = null;  //player controlled the user
    this.players = []; //players in game
@@ -50,6 +54,16 @@ Pong.OnlineGame.prototype.create = function() {
 }
 
 Pong.OnlineGame.prototype.update = function() {
+
+  /* get the input user and send to the server */
+  if (this.game.input.keyboard.isDown(this.KEY_UP)){
+    console.log('up')
+    this.player.socket.emit('input', {key: 'UP'});
+  } 
+  else if (this.game.input.keyboard.isDown(this.KEY_DOWN)){
+    console.log('down')
+    this.player.socket.emit('input', {key: 'DOWN'});
+  }
 
 }
 

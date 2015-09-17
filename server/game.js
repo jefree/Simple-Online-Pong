@@ -1,4 +1,5 @@
 var Player = require('./player.js')
+var ServerConManager = require('./serverConManager')
 
 /**
  * Game constants
@@ -24,6 +25,7 @@ function Game() {
 
   var id = idCounter++;
   var players = [];
+  var connManager = new ServerConManager(this);
 
   PLAYER_DATA.forEach(function(data){
     players.push(new Player(data, null, this));
@@ -71,8 +73,9 @@ function Game() {
       }
     }
 
-    //assign socket to player
+    //assign socket to player and configure it
     newPlayer.socket = socket;
+    connManager.configPlayerSocket(newPlayer);
 
     //emit welcome for the new player
     var gameState = getGameState();
@@ -141,6 +144,7 @@ function Game() {
   this.isFull = isFull;
   this.init = init;
   this.start = start;
+  this.players = players;
 }
 
 module.exports = Game;

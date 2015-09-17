@@ -26,6 +26,16 @@ function Player(data, socket, game) {
     get: function() { return socket; },
     set: function(s) { socket = s; }
    });
+
+  Object.defineProperty(this, 'x', {
+    get: function() { return x; },
+    set: function(newX) { x = newX; }
+   });
+
+  Object.defineProperty(this, 'y', {
+    get: function() { return y; },
+    set: function(newY) { y = newY; }
+   });
   
   this.getData = getData;
 
