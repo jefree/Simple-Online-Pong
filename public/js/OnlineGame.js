@@ -16,14 +16,18 @@ Pong.OnlineGame = function() {
   /**
    * export public variables
    */
-   this.PLAYER_DATA = PLAYER_DATA;
+  this.PLAYER_DATA = PLAYER_DATA;
    
-   this.KEY_UP = Phaser.Keyboard.UP;
-   this.KEY_DOWN = Phaser.Keyboard.DOWN;
+  this.KEY_UP = Phaser.Keyboard.UP;
+  this.KEY_DOWN = Phaser.Keyboard.DOWN;
 
-   this.connManager = new ConnManager(this);  //manager for the connection with the server
-   this.player = null;  //player controlled the user
-   this.players = []; //players in game
+  this.connManager = new ConnManager(this);  //manager for the connection with the server
+  this.player = null;  //player controlled the user
+  this.players = []; //players in game
+
+  //states for keys
+  this.keyUp = false;
+  this.keyDown = false;
 }
 
 //same as in the server side 
@@ -55,16 +59,26 @@ Pong.OnlineGame.prototype.create = function() {
 
 Pong.OnlineGame.prototype.update = function() {
 
-  /* get the input user and send to the server */
-  if (this.game.input.keyboard.isDown(this.KEY_UP)){
-    console.log('up')
-    this.player.socket.emit('input', {key: 'UP'});
-  } 
-  else if (this.game.input.keyboard.isDown(this.KEY_DOWN)){
-    console.log('down')
-    this.player.socket.emit('input', {key: 'DOWN'});
-  }
+  var currentUp = this.game.input.keyboard.isDown(this.KEY_UP);
+  var currentDown = this.game.input.keyboard.isDown(this.KEY_DOWN);
 
+  /* get the input user and send to the server */
+  if (this.keyUp && !currentUp){    
+    this.keyUp = false;
+    this.player.socket.emit('input', {key: 'UP', pressed: false});
+  } 
+  else if (!this.keyUp && currentUp) {
+    this.keyUp = true;
+    this.player.socket.emit('input', {key: 'UP', pressed: true});
+  }
+  else if (this.keyDown && !currentDown){
+    this.keyDown = false;
+    this.player.socket.emit('input', {key: 'DOWN', pressed: false});
+  }
+  else if (!this.keyDown && currentDown) {
+    this.keyDown = true;
+    this.player.socket.emit('input', {key: 'DOWN', pressed: true});
+  }
 }
 
 Pong.OnlineGame.prototype.render = function() {

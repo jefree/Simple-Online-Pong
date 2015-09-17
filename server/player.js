@@ -9,6 +9,14 @@ function Player(data, socket, game) {
   var width = data.width;
   var height = data.height;
 
+  var vx = 0;
+  var vy = 0;
+
+  function update() {
+    x += vx;
+    y += vy;
+  }
+
   function getData(){
     return {
       x: x,
@@ -36,7 +44,18 @@ function Player(data, socket, game) {
     get: function() { return y; },
     set: function(newY) { y = newY; }
    });
+
+   Object.defineProperty(this, 'vx', {
+    get: function() { return vx; },
+    set: function(newVx) { vx = newVx; }
+   });
+
+  Object.defineProperty(this, 'vy', {
+    get: function() { return vy; },
+    set: function(newVy) { vy = newVy; }
+   });
   
+  this.update = update;
   this.getData = getData;
 
 }

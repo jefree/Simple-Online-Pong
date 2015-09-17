@@ -9,11 +9,14 @@ function ServerConManager(game){
 
       console.log('new user input', inputData);
 
-      if (inputData.key == 'UP') {
-        player.y -= 1;
+      if (!inputData.pressed) {
+        player.vy = 0;
+      }
+      else if (inputData.key == 'UP') {
+        player.vy = -1;
       }
       else if (inputData.key == 'DOWN') {
-        player.y += 1;
+        player.vy = 1;
       }
     });
 

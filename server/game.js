@@ -37,6 +37,7 @@ function Game() {
    */
   function init() {
     setInterval(updateLoop, 45);  //send updates to clients every 45ms
+    setInterval(physicsLoop, 22); //update world every 22ms ~ 45fps
   }
 
   /**
@@ -48,6 +49,18 @@ function Game() {
     players.forEach(function(player){
       if (player.socket != null){
         player.socket.emit('update', gameState);
+      }
+    });
+  }
+
+  /**
+   * Physics loop. update the position for each player according
+   * to its current velocity
+   */
+  function physicsLoop() {
+    players.forEach(function(player){
+      if (player.socket != null){
+        player.update();
       }
     });
   }
