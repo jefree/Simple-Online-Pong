@@ -24,18 +24,41 @@ Pong.OnlineGame = function() {
   this.connManager = new ConnManager(this);  //manager for the connection with the server
   this.player = null;  //player controlled the user
   this.players = []; //players in game
+  this.clientTime = 0;
+  this.lastTime = -1;
 
   //states for keys
   this.keyUp = false;
   this.keyDown = false;
 }
 
-//same as in the server side 
-Pong.OnlineGame.prototype.preload = function() {
-  this.load.image('paddle', '/img/paddle.png');
-  this.load.image('ball', '/img/ball.png');
+Pong.OnlineGame.prototype.init = function(){
+  setInterval(this.physicsLoop.bind(this), 12);
+}
 
-  this.game.time.advancedTiming = true;
+Pong.OnlineGame.prototype.physicsLoop = function(){
+
+  if (this.lastTime == -1) {
+    this.lastTime = Date.now();
+    return;
+  }
+
+  var delta = (Date.now() - this.lastTime) / 1000;
+  this.lastTime = Date.now();
+  this.clientTime += delta;
+
+}
+
+Pong.OnlineGame.prototype.applyUpdate = function(gameState){
+
+  this.serverTime = gameState.gameTime;
+
+  gameState.players.forEach(function(playerData){
+    //update the info for the player if connected
+    var player = this.players[playerData.slot];
+    player.alpha = 1.0;
+    player.setData(playerData);
+  }.bind(this));
 }
 
 Pong.OnlineGame.prototype.create = function() {
@@ -81,8 +104,16 @@ Pong.OnlineGame.prototype.update = function() {
   }
 }
 
+Pong.OnlineGame.prototype.preload = function() {
+  this.load.image('paddle', '/img/paddle.png');
+  this.load.image('ball', '/img/ball.png');
+
+  this.game.time.advancedTiming = true;
+}
+
 Pong.OnlineGame.prototype.render = function() {
   //show current fps
-  this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00FF00");
+  this.game.debug.text(this.game.time.fps || '--', 2, 14, "#FF0000");
   this.game.debug.text(this.serverTime && this.serverTime.toFixed(2) || '--', 500, 14, "#00FF00");
+  this.game.debug.text(this.clientTime && this.clientTime.toFixed(2) || '--', 500, 30, "#FFF");
 }

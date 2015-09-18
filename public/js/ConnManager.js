@@ -11,10 +11,12 @@ function ConnManager(game) {
       //set the player that this user will control
       game.player = game.players[gameState.slot];
       game.player.socket = socket;
-      game.serverTime = gameState.gameTime;
+
+      game.clientTime = gameState.gameTime;
 
       //update all players
-      applyUpdate(gameState);
+      game.init();
+      game.applyUpdate(gameState);
 
     });
 
@@ -32,19 +34,7 @@ function ConnManager(game) {
     });
 
     socket.on('update', function(gameState) {
-      applyUpdate(gameState);
-    });
-  }
-
-  function applyUpdate(gameState){
-
-    game.serverTime = gameState.gameTime;
-
-    gameState.players.forEach(function(playerData){
-      //update the info for the player if connected
-      var player = game.players[playerData.slot];
-      player.alpha = 1.0;
-      player.setData(playerData);
+      game.applyUpdate(gameState);
     });
   }
 
