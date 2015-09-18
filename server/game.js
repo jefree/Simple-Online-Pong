@@ -29,6 +29,8 @@ function Game() {
   var players = [];
   var connManager = new ServerConManager(this);
 
+  var fakeLag = 100;
+
   PLAYER_DATA.forEach(function(data){
     players.push(new Player(data, null, this));
   }.bind(this));
@@ -48,11 +50,12 @@ function Game() {
   function updateLoop() {
     var gameState = getGameState();
 
-    players.forEach(function(player){
-      if (player.socket != null){
-        player.socket.emit('update', gameState);
-      }
-    });
+    if (fakeLag > 0) {
+      setTimeout(sendUpdate.bind(null, gameState), fakeLag);
+    }
+    else {
+      sendUpdate(gameState);
+    }
   }
 
   /**
@@ -72,6 +75,17 @@ function Game() {
     players.forEach(function(player){
       if (player.socket != null){
         player.update(delta);
+      }
+    });
+  }
+
+  /**
+   * send update to all players
+   */
+  function sendUpdate(gameState) {
+    players.forEach(function(player){
+      if (player.socket != null){
+        player.socket.emit('update', gameState);
       }
     });
   }
@@ -171,6 +185,7 @@ function Game() {
   this.init = init;
   this.start = start;
   this.players = players;
+  this.fakeLag = fakeLag;
 }
 
 module.exports = Game;
