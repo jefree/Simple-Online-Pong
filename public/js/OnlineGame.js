@@ -24,41 +24,76 @@ Pong.OnlineGame = function() {
   this.connManager = new ConnManager(this);  //manager for the connection with the server
   this.player = null;  //player controlled the user
   this.players = []; //players in game
-  this.clientTime = 0;
+  this.clientTime = -1;
   this.lastTime = -1;
 
-  //states for keys
-  this.keyUp = false;
-  this.keyDown = false;
+  this.rInputs = [];
+  this.inputCounter = -1;
 }
 
-Pong.OnlineGame.prototype.init = function(){
-  setInterval(this.physicsLoop.bind(this), 12);
+Pong.OnlineGame.prototype._init = function(){
+  setInterval(this.physicsLoop.bind(this), 15);
 }
 
 Pong.OnlineGame.prototype.physicsLoop = function(){
 
-  if (this.lastTime == -1) {
+  /*if (this.lastTime == -1) {
     this.lastTime = Date.now();
     return;
   }
 
   var delta = (Date.now() - this.lastTime) / 1000;
-  this.lastTime = Date.now();
+  this.lastTime = Date.now();*/
+
+  var delta = 0.015;
   this.clientTime += delta;
 
+  this.player.applyInputs(delta);
+}
+
+Pong.OnlineGame.prototype.applyCorrection = function(){
+
+  var totalToRemove = 0;
+  for (var i=0; i<this.rInputs.length; i++){
+    if (this.rInputs[i].id <= this.player.lastInput) {
+      totalToRemove++;
+    }
+    else {
+      break;
+    }
+  }
+
+  this.rInputs.splice(0, totalToRemove);
+  console.log('restantes', this.rInputs.length);
+
+  if (this.rInputs.length > 0) {
+    this.player.applyInputs(0.015, this.rInputs);
+  }
 }
 
 Pong.OnlineGame.prototype.applyUpdate = function(gameState){
 
   this.serverTime = gameState.gameTime;
 
+  console.log('------');
+  console.log('original', this.player.y);
+
   gameState.players.forEach(function(playerData){
     //update the info for the player if connected
     var player = this.players[playerData.slot];
     player.alpha = 1.0;
     player.setData(playerData);
+
+    if (player == this.player){
+      this.player.lastInput = playerData.lastInput;
+      console.log('last input', this.player.lastInput);
+    }
+
   }.bind(this));
+
+  console.log('server', this.player.y); 
+  this.applyCorrection();
+  console.log('corregida', this.player.y);
 }
 
 Pong.OnlineGame.prototype.create = function() {
@@ -82,25 +117,22 @@ Pong.OnlineGame.prototype.create = function() {
 
 Pong.OnlineGame.prototype.update = function() {
 
-  var currentUp = this.game.input.keyboard.isDown(this.KEY_UP);
-  var currentDown = this.game.input.keyboard.isDown(this.KEY_DOWN);
+  var keyUp = this.game.input.keyboard.isDown(this.KEY_UP);
+  var keyDown = this.game.input.keyboard.isDown(this.KEY_DOWN);
 
-  /* get the input user and send to the server */
-  if (this.keyUp && !currentUp){    
-    this.keyUp = false;
-    this.player.socket.emit('input', {key: 'UP', pressed: false});
-  } 
-  else if (!this.keyUp && currentUp) {
-    this.keyUp = true;
-    this.player.socket.emit('input', {key: 'UP', pressed: true});
+  var input = null;
+
+  if (keyUp) {
+    input = {id: ++this.inputCounter, key: 'UP'}
   }
-  else if (this.keyDown && !currentDown){
-    this.keyDown = false;
-    this.player.socket.emit('input', {key: 'DOWN', pressed: false});
+  else if (keyDown) {
+    input = {id: ++this.inputCounter, key: 'DOWN'};
   }
-  else if (!this.keyDown && currentDown) {
-    this.keyDown = true;
-    this.player.socket.emit('input', {key: 'DOWN', pressed: true});
+
+  if (input) {
+    this.player.socket.emit('input', input);
+    this.player.inputs.push(input);
+    this.rInputs.push(input);
   }
 }
 

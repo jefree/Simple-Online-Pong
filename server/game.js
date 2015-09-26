@@ -29,7 +29,7 @@ function Game() {
   var players = [];
   var connManager = new ServerConManager(this);
 
-  var fakeLag = 100;
+  var fakeLag = 1000;
 
   PLAYER_DATA.forEach(function(data){
     players.push(new Player(data, null, this));
@@ -40,18 +40,17 @@ function Game() {
    * Create the loops for this game
    */
   function init() {
+    setInterval(physicsLoop, 15); //update world every 22ms ~ 45fps
     setInterval(updateLoop, 45);  //send updates to clients every 45ms
-    setInterval(physicsLoop, 22); //update world every 22ms ~ 45fps
   }
 
   /**
    * The update loop. Send current game state to all players
    */
   function updateLoop() {
-    var gameState = getGameState();
 
     if (fakeLag > 0) {
-      setTimeout(sendUpdate.bind(null, gameState), fakeLag);
+      setTimeout(sendUpdate.bind(null), fakeLag/2);
     }
     else {
       sendUpdate(gameState);
@@ -68,13 +67,16 @@ function Game() {
       return;
     }
 
-    var delta = (Date.now() - lastTime) / 1000;
-    lastTime = Date.now();
+    /*var delta = (Date.now() - lastTime) / 1000;
+    lastTime = Date.now();*/
+
+    var delta = 0.015;
     gameTime += delta;
 
     players.forEach(function(player){
       if (player.socket != null){
-        player.update(delta);
+        player.applyInputs(delta);
+        console.log(player.y);
       }
     });
   }
@@ -82,7 +84,9 @@ function Game() {
   /**
    * send update to all players
    */
-  function sendUpdate(gameState) {
+  function sendUpdate() {
+    var gameState = getGameState();
+
     players.forEach(function(player){
       if (player.socket != null){
         player.socket.emit('update', gameState);
@@ -111,6 +115,23 @@ function Game() {
       }
     }
 
+    if (fakeLag > 0) {
+      setTimeout(sendWelcome.bind(null, newPlayer, socket, slot), fakeLag);
+    }
+    else{
+      sendWelcome(null, newPlayer, socket, slot);
+    }
+  }
+
+  function start(){
+    console.log('start game ', id)
+
+    players.forEach(function(player){
+      player.socket.emit('start', {msg: 'Your game is about to start'})
+    });
+  }
+
+  function sendWelcome(newPlayer, socket, slot){
     //assign socket to player and configure it
     newPlayer.socket = socket;
     connManager.configPlayerSocket(newPlayer);
@@ -120,7 +141,7 @@ function Game() {
     gameState.slot = slot;
     newPlayer.socket.emit('welcome', gameState);
 
-    // emit player event for all others active players
+     // emit player event for all others active players
     var newPlayerData = newPlayer.getData();
     newPlayerData.slot = slot;
 
@@ -131,14 +152,6 @@ function Game() {
         player.socket.emit('player', newPlayerData);
       }
     }
-  }
-
-  function start(){
-    console.log('start game ', id)
-
-    players.forEach(function(player){
-      player.socket.emit('start', {msg: 'Your game is about to start'})
-    });
   }
 
   /**

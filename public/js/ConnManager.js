@@ -12,10 +12,10 @@ function ConnManager(game) {
       game.player = game.players[gameState.slot];
       game.player.socket = socket;
 
-      game.clientTime = gameState.gameTime;
+      game.clientTime = gameState.gameTime + 0.050;
 
       //update all players
-      game.init();
+      game._init();
       game.applyUpdate(gameState);
 
     });

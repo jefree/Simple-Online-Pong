@@ -9,7 +9,7 @@ function ServerConManager(game){
 
       if (game.fakeLag > 0){
         //this just for test, it'll remove comment in the fututre
-        setTimeout(onInput.bind(null, player, inputData), game.fakeLag);
+        setTimeout(onInput.bind(null, player, inputData), game.fakeLag/2);
       }
       else {
         onInput(player, inputData);
@@ -22,18 +22,7 @@ function ServerConManager(game){
    * Process user inputs. update the velocity.
    */
   function onInput(player, inputData) {
-
-    console.log('new user input', inputData);
-
-    if (!inputData.pressed) {
-      player.vy = 0;
-    }
-    else if (inputData.key == 'UP') {
-      player.vy = -100;
-    }
-    else if (inputData.key == 'DOWN') {
-      player.vy = 100;
-    }
+    player.inputs.push(inputData);
   }
 
   this.configPlayerSocket = configPlayerSocket;
