@@ -8,6 +8,7 @@ Pong.OnlineGame = function() {
   var GAME_WIDHT = 640;
   var GAME_HEIGHT = 480;
 
+
   var PLAYER_DATA = [
     {x: 0, y: 0, w: 30, h: 100},
     {x: GAME_WIDHT-30, y: GAME_HEIGHT-100, w: 30, h: 100}
@@ -16,6 +17,8 @@ Pong.OnlineGame = function() {
   /**
    * export public variables
    */
+  this.STEP_TIME = 0.022;  //update physics each 22ms
+  
   this.PLAYER_DATA = PLAYER_DATA;
    
   this.KEY_UP = Phaser.Keyboard.UP;
@@ -32,7 +35,7 @@ Pong.OnlineGame = function() {
 }
 
 Pong.OnlineGame.prototype._init = function(){
-  setInterval(this.physicsLoop.bind(this), 15);
+  setInterval(this.physicsLoop.bind(this), this.STEP_TIME*1000);
 }
 
 Pong.OnlineGame.prototype.physicsLoop = function(){
@@ -45,7 +48,7 @@ Pong.OnlineGame.prototype.physicsLoop = function(){
   var delta = (Date.now() - this.lastTime) / 1000;
   this.lastTime = Date.now();*/
 
-  var delta = 0.015;
+  var delta = this.STEP_TIME;
   this.clientTime += delta;
 
   this.player.applyInputs(delta);
@@ -67,7 +70,7 @@ Pong.OnlineGame.prototype.applyCorrection = function(){
   console.log('restantes', this.rInputs.length);
 
   if (this.rInputs.length > 0) {
-    this.player.applyInputs(0.015, this.rInputs);
+    this.player.applyInputs(this.STEP_TIME, this.rInputs);
   }
 }
 

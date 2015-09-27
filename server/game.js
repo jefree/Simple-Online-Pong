@@ -6,6 +6,7 @@ var ServerConManager = require('./serverConManager')
  */
 var GAME_WIDHT = 640;
 var GAME_HEIGHT = 480;
+var STEP_TIME = 0.022;
 
 /*
  * Data for each available player slot into the game. 
@@ -31,6 +32,7 @@ function Game() {
 
   var fakeLag = 1000;
 
+
   PLAYER_DATA.forEach(function(data){
     players.push(new Player(data, null, this));
   }.bind(this));
@@ -40,7 +42,7 @@ function Game() {
    * Create the loops for this game
    */
   function init() {
-    setInterval(physicsLoop, 15); //update world every 22ms ~ 45fps
+    setInterval(physicsLoop, STEP_TIME*1000); //update world every 22ms ~ 45fps
     setInterval(updateLoop, 45);  //send updates to clients every 45ms
   }
 
@@ -70,7 +72,7 @@ function Game() {
     /*var delta = (Date.now() - lastTime) / 1000;
     lastTime = Date.now();*/
 
-    var delta = 0.015;
+    var delta = STEP_TIME;
     gameTime += delta;
 
     players.forEach(function(player){
