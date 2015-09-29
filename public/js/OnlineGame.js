@@ -17,7 +17,9 @@ Pong.OnlineGame = function() {
   /**
    * export public variables
    */
-  this.STEP_TIME = 0.022;  //update physics each 22ms
+  this.STEP_TIME = 0.022; //update physics each 22ms
+  this.INTERP_TIME = 0.09; //interpolate other entities from 100ms in the past
+  this.UPDATES_LIMIT = 10; //just have the last updates
   
   this.PLAYER_DATA = PLAYER_DATA;
    
@@ -32,6 +34,8 @@ Pong.OnlineGame = function() {
 
   this.rInputs = [];
   this.inputCounter = -1;
+
+  this.gameUpdates = [];
 }
 
 Pong.OnlineGame.prototype._init = function(){
@@ -52,6 +56,7 @@ Pong.OnlineGame.prototype.physicsLoop = function(){
   this.clientTime += delta;
 
   this.player.applyInputs(delta);
+  this.interpolatePlayers();
 }
 
 Pong.OnlineGame.prototype.applyCorrection = function(){
@@ -76,7 +81,15 @@ Pong.OnlineGame.prototype.applyCorrection = function(){
 
 Pong.OnlineGame.prototype.applyUpdate = function(gameState){
 
+  this.gameUpdates.push(gameState);
+
+
+  if (this.gameUpdates.length > this.UPDATES_LIMIT) {
+    this.gameUpdates.splice(0, 1);
+  }
+
   this.serverTime = gameState.gameTime;
+  this.clientTime = this.serverTime;
 
   console.log('------');
   console.log('original', this.player.y);
@@ -85,9 +98,9 @@ Pong.OnlineGame.prototype.applyUpdate = function(gameState){
     //update the info for the player if connected
     var player = this.players[playerData.slot];
     player.alpha = 1.0;
-    player.setData(playerData);
-
+    
     if (player == this.player){
+      player.setData(playerData);
       this.player.lastInput = playerData.lastInput;
       console.log('last input', this.player.lastInput);
     }
@@ -97,6 +110,40 @@ Pong.OnlineGame.prototype.applyUpdate = function(gameState){
   console.log('server', this.player.y); 
   this.applyCorrection();
   console.log('corregida', this.player.y);
+}
+
+Pong.OnlineGame.prototype.interpolatePlayers = function(){
+  var pastTime = this.clientTime - this.INTERP_TIME;
+
+  var previous = null;
+  var target = null;
+
+  for (var i=0; i<this.gameUpdates.length-1; i++){
+    var previous_state = this.gameUpdates[i];
+    var next_state = this.gameUpdates[i+1];
+
+    if (previous_state.gameTime > pastTime && pastTime < next_state.gameTime){
+      previous = previous_state;
+      target = next_state;
+      break;
+    }
+  }
+
+  if (previous && target) {
+
+    for (var i=0; i<target.players.length; i++) {
+      var targetPlayer = target.players[i];
+      var player = this.players[i];
+
+      //just make interp for other players
+      if (player != this.player) {
+        console.log('total time', target.gameTime-pastTime);
+        console.log('delta interp', this.STEP_TIME/(target.gameTime-pastTime))
+        player.lerp(targetPlayer, this.STEP_TIME/(target.gameTime-pastTime));
+      }
+    }
+  }
+
 }
 
 Pong.OnlineGame.prototype.create = function() {

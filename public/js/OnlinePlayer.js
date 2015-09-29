@@ -48,3 +48,8 @@ Pong.Player.prototype.applyInputs = function(delta, inputs) {
     this.inputs = [];
   }
 }
+
+Pong.Player.prototype.lerp = function(target, delta) {
+  this.x = this.x + delta * (target.x - this.x);
+  this.y = this.y + delta * (target.y - this.y);
+}

@@ -32,11 +32,6 @@ function ConnManager(game) {
     });
 
     socket.on('update', function(gameState) {
-
-      if (game.clientTime == -1) {
-        gameTime.clientTime = gameState.gameTime;
-      }
-
       game.applyUpdate(gameState);
     });
   }

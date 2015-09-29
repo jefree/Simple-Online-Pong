@@ -30,7 +30,7 @@ function Game() {
   var players = [];
   var connManager = new ServerConManager(this);
 
-  var fakeLag = 1000;
+  var fakeLag = 0;
 
 
   PLAYER_DATA.forEach(function(data){
@@ -55,7 +55,7 @@ function Game() {
       setTimeout(sendUpdate.bind(null), fakeLag/2);
     }
     else {
-      sendUpdate(gameState);
+      sendUpdate();
     }
   }
 
@@ -78,7 +78,6 @@ function Game() {
     players.forEach(function(player){
       if (player.socket != null){
         player.applyInputs(delta);
-        console.log(player.y);
       }
     });
   }
@@ -121,7 +120,7 @@ function Game() {
       setTimeout(sendWelcome.bind(null, newPlayer, socket, slot), fakeLag);
     }
     else{
-      sendWelcome(null, newPlayer, socket, slot);
+      sendWelcome(newPlayer, socket, slot);
     }
   }
 
