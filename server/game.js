@@ -1,4 +1,5 @@
-var Player = require('./player.js')
+var Player = require('./player')
+var Ball = require('./ball')
 var ServerConManager = require('./serverConManager')
 
 /**
@@ -16,6 +17,8 @@ var PLAYER_DATA = [
   {x: GAME_WIDHT-30, y: GAME_HEIGHT-100, w: 30, h: 100}
 ];
 
+var BALL_DATA = { x: 310, y: 230, w: 20, h: 20 };
+
 var idCounter = 0;
 
 /**
@@ -30,13 +33,13 @@ function Game() {
   var players = [];
   var connManager = new ServerConManager(this);
 
-  var fakeLag = 100;
-
+  var fakeLag = 60;
 
   PLAYER_DATA.forEach(function(data){
     players.push(new Player(data, null, this));
   }.bind(this));
 
+  var ball = new Ball(this, BALL_DATA);
 
   /**
    * Create the loops for this game
@@ -80,6 +83,8 @@ function Game() {
         player.applyInputs(delta);
       }
     });
+
+    ball.move(delta);
   }
 
   /**
@@ -171,6 +176,7 @@ function Game() {
       }
     });
 
+    state.ball = ball.getData();
     state.gameTime = gameTime;
 
     return state;

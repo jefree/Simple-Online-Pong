@@ -8,21 +8,23 @@ Pong.OnlineGame = function() {
   var GAME_WIDHT = 640;
   var GAME_HEIGHT = 480;
 
-
   var PLAYER_DATA = [
     {x: 0, y: 0, w: 30, h: 100},
     {x: GAME_WIDHT-30, y: GAME_HEIGHT-100, w: 30, h: 100}
   ];
 
+  var BALL_DATA = { x: 310, y: 230, w: 20, h: 20 };
+
   /**
    * export public variables
    */
   this.STEP_TIME = 0.022; //update physics each 22ms
-  this.INTERP_TIME = 0.1; //interpolate other entities from 100ms in the past
+  this.INTERP_TIME = 0.06; //interpolate other entities from 100ms in the past
   this.UPDATES_LIMIT = 10; //just have the last updates
   this.PING_TIME = 5; //request a ping update each 5 seconds
   
   this.PLAYER_DATA = PLAYER_DATA;
+  this.BALL_DATA = BALL_DATA;
    
   this.KEY_UP = Phaser.Keyboard.UP;
   this.KEY_DOWN = Phaser.Keyboard.DOWN;
@@ -96,12 +98,6 @@ Pong.OnlineGame.prototype.applyUpdate = function(gameState){
   this.serverTime = gameState.gameTime;
   this.clientTime = this.serverTime;
 
-  if (this.gameUpdates.lenght >= 2)
-    console.log(
-    this.gameUpdates[this.gameUpdates.length-2].gameTime, 
-    this.clientTime-this.INTERP_TIME,
-    this.gameUpdates[this.gameUpdates.length-1].gameTime);
-
   //console.log('------');
   //console.log('original', this.player.y);
 
@@ -133,11 +129,7 @@ Pong.OnlineGame.prototype.interpolatePlayers = function(){
     var previous_state = this.gameUpdates[i];
     var next_state = this.gameUpdates[i+1];
 
-    if (i == this.gameUpdates.length-2)
-      console.log(previous_state.gameTime, pastTime, next_state.gameTime);
-
     if (previous_state.gameTime < pastTime && pastTime < next_state.gameTime){
-      console.log('encontrado')
       previous = previous_state;
       target = next_state;
       break;
@@ -145,6 +137,8 @@ Pong.OnlineGame.prototype.interpolatePlayers = function(){
   }
 
   if (previous && target) {
+
+    var delta = this.STEP_TIME/(target.gameTime-pastTime)
 
     for (var i=0; i<target.players.length; i++) {
       var targetPlayer = target.players[i];
@@ -154,9 +148,13 @@ Pong.OnlineGame.prototype.interpolatePlayers = function(){
       if (player != this.player) {
         //console.log('total time', target.gameTime-pastTime);
         //console.log('delta interp', this.STEP_TIME/(target.gameTime-pastTime))
-        player.lerp(targetPlayer, this.STEP_TIME/(target.gameTime-pastTime));
+        player.lerp(targetPlayer, delta);
       }
     }
+
+    this.ball.lerp(target.ball, delta)
+    console.log('ball', this.ball.x, this.ball.y)
+
   }
 
 }
@@ -176,6 +174,8 @@ Pong.OnlineGame.prototype.create = function() {
     player.alpha = 0.5; //all players are disable until the server assign a slot to it 
     this.players.push(player);
   }.bind(this));
+
+  this.ball = new Pong.Ball(this.game, this.BALL_DATA);
 
   this.connManager.connect();
 }
