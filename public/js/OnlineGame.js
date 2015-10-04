@@ -5,15 +5,17 @@ Pong.OnlineGame = function() {
   /**
    * Static values for the game. the same as in the server.
    */
-  var GAME_WIDTH = 640;
-  var GAME_HEIGHT = 480;
+  this.GAME_WIDTH = 640;
+  this.GAME_HEIGHT = 480;
 
-  var PLAYER_DATA = [
+  this.PLAYER_DATA = [
     {x: 0, y: 0, w: 30, h: 100},
-    {x: GAME_WIDTH-30, y: GAME_HEIGHT-100, w: 30, h: 100}
+    {x: this.GAME_WIDTH-30, y: this.GAME_HEIGHT-100, w: 30, h: 100}
   ];
 
-  var BALL_DATA = { x: 310, y: 230, w: 20, h: 20 };
+  this.BALL_DATA = { x: 310, y: 230, w: 20, h: 20 };
+
+  this.FAIL_DELTA = 5;
 
   /**
    * export public variables
@@ -22,11 +24,6 @@ Pong.OnlineGame = function() {
   this.INTERP_TIME = 0.06; //interpolate other entities from 100ms in the past
   this.UPDATES_LIMIT = 10; //just have the last updates
   this.PING_TIME = 5; //request a ping update each 5 seconds
-  
-  this.GAME_WIDTH = GAME_WIDTH;
-  this.GAME_HEIGHT = GAME_HEIGHT;
-  this.PLAYER_DATA = PLAYER_DATA;
-  this.BALL_DATA = BALL_DATA;
    
   this.KEY_UP = Phaser.Keyboard.UP;
   this.KEY_DOWN = Phaser.Keyboard.DOWN;
@@ -69,11 +66,14 @@ Pong.OnlineGame.prototype.physicsLoop = function(){
   this.interpolatePlayers();
 
   /**
-   * update physics for our player
+   * update physics 
    */
   this.playerPhysics();
 }
 
+/**
+ * avoid player exits of screen
+ */
 Pong.OnlineGame.prototype.playerPhysics = function(){
   if (this.player.y <= 0){
     this.player.y = 0;
@@ -81,6 +81,15 @@ Pong.OnlineGame.prototype.playerPhysics = function(){
   else if (this.player.y+this.player.height >= this.GAME_HEIGHT){
     this.player.y = this.GAME_HEIGHT-this.player.height;
   }
+}
+
+/**
+ * put the ball in its inital position for a new round
+ */
+
+Pong.OnlineGame.prototype.putBall = function(){
+  this.ball.x = this.BALL_DATA.x;
+  this.ball.y = this.BALL_DATA.y;
 }
 
 Pong.OnlineGame.prototype.applyCorrection = function(){
@@ -168,8 +177,17 @@ Pong.OnlineGame.prototype.interpolatePlayers = function(){
         player.lerp(targetPlayer, delta);
       }
     }
-
+    /**
+     * If the ball was reset, we need reset it and mark
+     * the target as ball reseted already.
+     */
+    if (target.resetBall) {
+      this.putBall();
+      target.resetBall = false;
+    }
+    
     this.ball.lerp(target.ball, delta)
+
     console.log('ball', this.ball.x, this.ball.y)
 
   }

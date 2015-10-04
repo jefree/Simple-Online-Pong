@@ -8,14 +8,13 @@ function Player(data, socket, game) {
   var y = data.y;
   var width = data.w;
   var height = data.h;
-
-  console.log(width, height);
-
   var vx = 0;
   var vy = 100;
 
   var lastInput = -1;
   var inputs = [];
+
+  var life = 0;
 
   function update(delta) {
     x += vx * delta;
@@ -102,6 +101,11 @@ function Player(data, socket, game) {
   Object.defineProperty(this, 'inputs', {
     get: function() { return inputs; },
     set: function(newInputs) { inputs = newInputs; }
+  });
+
+  Object.defineProperty(this, 'life', {
+    get: function() { return life; },
+    set: function(newLife) { life = newLife; }
   });
 
   this.update = update;

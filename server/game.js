@@ -10,6 +10,9 @@ var GAME_WIDHT = 640;
 var GAME_HEIGHT = 480;
 var STEP_TIME = 0.022;
 
+var FAIL_DELTA = 5; //delta distance for which a player will lose a life if ball enter in his area
+var PLAYER_INIT_LIFE = 10;
+
 /*
  * Data for each available player slot into the game. 
  */
@@ -21,6 +24,7 @@ var PLAYER_DATA = [
 var BALL_DATA = { x: 310, y: 230, w: 20, h: 20 };
 
 var idCounter = 0;
+var resetBall = false;  //helper to tell user that ball was reseted
 
 /**
  * Game object constructor
@@ -109,7 +113,15 @@ function Game() {
         ball.vx = -ball.vx;
       }
 
-      if (ball.y < 0){
+      if (ball.x < players[0].width-FAIL_DELTA) {
+        players[0].life -= 1; 
+        newRound();
+      }
+      else if(ball.x > players[1].x+FAIL_DELTA) {
+        players[1].life -= 1;
+        newRound();
+      }
+      else if (ball.y < 0){
         ball.y = 0;
         ball.vy = -ball.vy;
       }
@@ -125,10 +137,11 @@ function Game() {
    * put the players in theirs inital position to
    * start a new game
    */
-  function putPlayers() {
+  function initPlayers() {
     players.forEach(function(player, index) {
       player.x = PLAYER_DATA[index].x;
       player.y = PLAYER_DATA[index].y;
+      player.life = PLAYER_INIT_LIFE;
     });
   }
 
@@ -142,6 +155,16 @@ function Game() {
 
     ball.vx = 50 * (Math.random()<0.5 ? 1 : -1);
     ball.vy = 40 * (Math.random()<0.5 ? 1 : -1);
+
+    resetBall = true;
+  }
+
+  /**
+   * verify if a player has lose the game, otherwise 
+   * init a new round.
+   */
+  function newRound() {
+    putBall();  //put ball in position for a new round
   }
 
   /**
@@ -184,7 +207,7 @@ function Game() {
   function start(){
     console.log('start game ', id)
 
-    putPlayers();
+    initPlayers();
     putBall();
 
     started = true;
@@ -235,6 +258,11 @@ function Game() {
 
     state.ball = ball.getData();
     state.gameTime = gameTime;
+    state.resetBall = resetBall;
+
+    if (resetBall) {
+      resetBall = false;
+    }
 
     return state;
   }
