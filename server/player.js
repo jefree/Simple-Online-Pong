@@ -6,8 +6,10 @@ function Player(data, socket, game) {
 
   var x = data.x;
   var y = data.y;
-  var width = data.width;
-  var height = data.height;
+  var width = data.w;
+  var height = data.h;
+
+  console.log(width, height);
 
   var vx = 0;
   var vy = 100;
@@ -72,7 +74,17 @@ function Player(data, socket, game) {
     set: function(newY) { y = newY; }
   });
 
-   Object.defineProperty(this, 'vx', {
+  Object.defineProperty(this, 'width', {
+    get: function() { return width; },
+    set: function(newWidth) { width = newWidth; }
+  });
+
+  Object.defineProperty(this, 'height', {
+    get: function() { return height; },
+    set: function(newHeight) { height = newHeight; }
+  });
+
+  Object.defineProperty(this, 'vx', {
     get: function() { return vx; },
     set: function(newVx) { vx = newVx; }
   });

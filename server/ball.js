@@ -8,7 +8,7 @@ function Ball(game, data) {
   var width = data.w;
   var height = data.h;
   
-  var vx = 40;
+  var vx = 0;
   var vy = 0;
 
   function getData() {
@@ -33,6 +33,26 @@ function Ball(game, data) {
   Object.defineProperty(this, 'y', {
     get: function() { return y; },
     set: function(newY) { y = newY; }
+  });
+
+  Object.defineProperty(this, 'width', {
+    get: function() { return width; },
+    set: function(newWidth) { width = newWidth; }
+  });
+
+  Object.defineProperty(this, 'height', {
+    get: function() { return height; },
+    set: function(newHeight) { height = newHeight; }
+  });
+
+  Object.defineProperty(this, 'vx', {
+    get: function() { return vx; },
+    set: function(newVx) { vx = newVx; }
+  });
+
+  Object.defineProperty(this, 'vy', {
+    get: function() { return vy; },
+    set: function(newVy) { vy = newVy; }
   });
 
   this.move = move;

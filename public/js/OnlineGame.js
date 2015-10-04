@@ -176,6 +176,7 @@ Pong.OnlineGame.prototype.create = function() {
   }.bind(this));
 
   this.ball = new Pong.Ball(this.game, this.BALL_DATA);
+  this.ball.alpha = 0.5;
 
   this.connManager.connect();
 }

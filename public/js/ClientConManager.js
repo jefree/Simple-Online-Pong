@@ -34,6 +34,8 @@ function ConnManager(game) {
 
     socket.on('start', function(data){
       console.log(data.msg);
+
+      game.ball.alpha = 1;
     });
 
     socket.on('update', function(gameState) {

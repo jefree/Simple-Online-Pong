@@ -1,6 +1,7 @@
 var Player = require('./player')
 var Ball = require('./ball')
 var ServerConManager = require('./serverConManager')
+var physics = require('./physics');
 
 /**
  * Game constants
@@ -28,6 +29,7 @@ function Game() {
   console.log('new game ', idCounter);
 
   var id = idCounter++;
+  var started = false;
   var gameTime = 0;
   var lastTime = -1;
   var players = [];
@@ -78,13 +80,59 @@ function Game() {
     var delta = STEP_TIME;
     gameTime += delta;
 
+    /**
+     * update position of entities
+     */
+
     players.forEach(function(player){
       if (player.socket != null){
         player.applyInputs(delta);
       }
     });
 
-    ball.move(delta);
+    if (started) {
+
+      ball.move(delta);
+
+      if (physics.intersect(ball, players[0]) ||
+          physics.intersect(ball, players[1]))
+      {
+        ball.vx = -ball.vx;
+      }
+
+      if (ball.y < 0){
+        ball.y = 0;
+        ball.vy = -ball.vy;
+      }
+      else if (ball.y+ball.height > GAME_HEIGHT) {
+        ball.y = GAME_HEIGHT - ball.height;
+        ball.vy = -ball.vy; 
+      }
+
+    }
+  }
+
+  /**
+   * put the players in theirs inital position to
+   * start a new game
+   */
+  function putPlayers() {
+    players.forEach(function(player, index) {
+      player.x = PLAYER_DATA[index].x;
+      player.y = PLAYER_DATA[index].y;
+    });
+  }
+
+  /**
+   * put the ball on its inital position to start
+   * a new round
+   */
+  function putBall() {
+    ball.x = BALL_DATA.x;
+    ball.y = BALL_DATA.y;
+
+    ball.vx = 50 * (Math.random()<0.5 ? 1 : -1);
+    ball.vy = 40 * (Math.random()<0.5 ? 1 : -1);
   }
 
   /**
@@ -121,16 +169,16 @@ function Game() {
       }
     }
 
-    if (fakeLag > 0) {
-      setTimeout(sendWelcome.bind(null, newPlayer, socket, slot), fakeLag);
-    }
-    else{
-      sendWelcome(newPlayer, socket, slot);
-    }
+    sendWelcome(newPlayer, socket, slot);    
   }
 
   function start(){
     console.log('start game ', id)
+
+    putPlayers();
+    putBall();
+
+    started = true;
 
     players.forEach(function(player){
       player.socket.emit('start', {msg: 'Your game is about to start'})
@@ -193,6 +241,8 @@ function Game() {
         freeSlots++;
       }
     });
+
+    console.log(freeSlots)
 
     return freeSlots == 0;
   }
