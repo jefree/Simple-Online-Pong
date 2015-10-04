@@ -90,6 +90,15 @@ function Game() {
       }
     });
 
+    players.forEach(function(player){
+      if (player.y <= 0) {
+        player.y = 0;
+      }
+      else if (player.y+player.height >= GAME_HEIGHT){
+        player.y = GAME_HEIGHT-player.height;
+      }
+    });
+
     if (started) {
 
       ball.move(delta);
