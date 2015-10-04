@@ -39,7 +39,7 @@ function Game() {
   var players = [];
   var connManager = new ServerConManager(this);
 
-  var fakeLag = 60;
+  var fakeLag = 100;
 
   PLAYER_DATA.forEach(function(data){
     players.push(new Player(data, null, this));
@@ -130,6 +130,12 @@ function Game() {
         ball.vy = -ball.vy; 
       }
 
+      //increase ball velocity
+
+      if (ball.vx <= 200) {
+        ball.vx = ball.vx + Math.sign(ball.vx)*4*delta; 
+        ball.vy = ball.vy + Math.sign(ball.vy)*4*delta; 
+      }
     }
   }
 
@@ -204,6 +210,7 @@ function Game() {
     // start game in 3 seconds
     setTimeout(function(){
       started = true;
+
     }, 3000);
 
   }

@@ -215,6 +215,7 @@ Pong.OnlineGame.prototype.create = function() {
 
   //set the background color por the game
   this.game.stage.backgroundColor = '#0000FF';
+  this.game.stage.disableVisibilityChange = true;
 
   /* Create the players for the game */
   this.players = [];
