@@ -27,6 +27,11 @@ function ConnManager(game) {
       player.alpha = 1.0;
     });
 
+    socket.on('ping', function(data){
+      var lastTime = data.time;
+      game.ping = Date.now() - lastTime;
+    });
+
     socket.on('start', function(data){
       console.log(data.msg);
     });

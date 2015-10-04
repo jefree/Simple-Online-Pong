@@ -20,6 +20,7 @@ Pong.OnlineGame = function() {
   this.STEP_TIME = 0.022; //update physics each 22ms
   this.INTERP_TIME = 0.1; //interpolate other entities from 100ms in the past
   this.UPDATES_LIMIT = 10; //just have the last updates
+  this.PING_TIME = 5; //request a ping update each 5 seconds
   
   this.PLAYER_DATA = PLAYER_DATA;
    
@@ -40,6 +41,11 @@ Pong.OnlineGame = function() {
 
 Pong.OnlineGame.prototype._init = function(){
   setInterval(this.physicsLoop.bind(this), this.STEP_TIME*1000);
+  setInterval(this.pingTimer.bind(this), this.PING_TIME*1000);
+}
+
+Pong.OnlineGame.prototype.pingTimer = function(){
+  this.player.socket.emit('ping', {time: Date.now()});
 }
 
 Pong.OnlineGame.prototype.physicsLoop = function(){
@@ -205,6 +211,9 @@ Pong.OnlineGame.prototype.preload = function() {
 Pong.OnlineGame.prototype.render = function() {
   //show current fps
   this.game.debug.text(this.game.time.fps || '--', 2, 14, "#FF0000");
-  this.game.debug.text(this.serverTime && this.serverTime.toFixed(2) || '--', 500, 14, "#00FF00");
+
+  this.game.debug.text(this.serverTime && this.serverTime.toFixed(2) || '--', 500, 15, "#00FF00");
   this.game.debug.text(this.clientTime && this.clientTime.toFixed(2) || '--', 500, 30, "#FFF");
+
+  this.game.debug.text(this.ping && this.ping.toFixed(0) || '--', 500, 45, "#FF0");
 }

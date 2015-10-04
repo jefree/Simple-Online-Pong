@@ -30,7 +30,7 @@ function Game() {
   var players = [];
   var connManager = new ServerConManager(this);
 
-  var fakeLag = 0;
+  var fakeLag = 100;
 
 
   PLAYER_DATA.forEach(function(data){
