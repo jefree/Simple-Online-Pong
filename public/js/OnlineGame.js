@@ -194,6 +194,23 @@ Pong.OnlineGame.prototype.interpolatePlayers = function(){
 
 }
 
+Pong.OnlineGame.prototype.startBootTimer = function(){
+  var remainingTime = 3;
+  var timer = this.game.time.create();
+  var timerText = this.game.add.text(320, 100, '3', {fontSize: 25});
+
+  timer.repeat(1000, 3, function(){
+    remainingTime -= 1;
+    timerText.text = ''+remainingTime;
+
+    if (remainingTime == 0) {
+      timerText.destroy();
+    }
+  });
+
+  timer.start();
+}
+
 Pong.OnlineGame.prototype.create = function() {
 
   //set the background color por the game

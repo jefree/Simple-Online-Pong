@@ -134,18 +134,6 @@ function Game() {
   }
 
   /**
-   * put the players in theirs inital position to
-   * start a new game
-   */
-  function initPlayers() {
-    players.forEach(function(player, index) {
-      player.x = PLAYER_DATA[index].x;
-      player.y = PLAYER_DATA[index].y;
-      player.life = PLAYER_INIT_LIFE;
-    });
-  }
-
-  /**
    * put the ball on its inital position to start
    * a new round
    */
@@ -154,7 +142,7 @@ function Game() {
     ball.y = BALL_DATA.y;
 
     ball.vx = 50 * (Math.random()<0.5 ? 1 : -1);
-    ball.vy = 40 * (Math.random()<0.5 ? 1 : -1);
+    ball.vy = 50 * (Math.random()<0.5 ? 1 : -1);
 
     resetBall = true;
   }
@@ -207,14 +195,17 @@ function Game() {
   function start(){
     console.log('start game ', id)
 
-    initPlayers();
     putBall();
-
-    started = true;
 
     players.forEach(function(player){
       player.socket.emit('start', {msg: 'Your game is about to start'})
     });
+
+    // start game in 3 seconds
+    setTimeout(function(){
+      started = true;
+    }, 3000);
+
   }
 
   function sendWelcome(newPlayer, socket, slot){
