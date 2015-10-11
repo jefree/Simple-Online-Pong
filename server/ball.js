@@ -7,6 +7,7 @@ function Ball(game, data) {
   var y = data.y;
   var width = data.w;
   var height = data.h;
+  var radius = data.r;
   
   var vx = 0;
   var vy = 0;
@@ -43,6 +44,11 @@ function Ball(game, data) {
   Object.defineProperty(this, 'height', {
     get: function() { return height; },
     set: function(newHeight) { height = newHeight; }
+  });
+
+  Object.defineProperty(this, 'r', {
+    get: function() { return radius; },
+    set: function(newRadius) { radius = newRadius; }
   });
 
   Object.defineProperty(this, 'vx', {

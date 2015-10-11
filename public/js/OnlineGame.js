@@ -13,7 +13,7 @@ Pong.OnlineGame = function() {
     {x: this.GAME_WIDTH-30, y: this.GAME_HEIGHT-100, w: 30, h: 100}
   ];
 
-  this.BALL_DATA = { x: 310, y: 230, w: 20, h: 20 };
+  this.BALL_DATA = { x: 310, y: 230, w: 30, h: 30, r: 15 };
 
   this.FAIL_DELTA = 5;
 
@@ -257,7 +257,7 @@ Pong.OnlineGame.prototype.update = function() {
 
 Pong.OnlineGame.prototype.preload = function() {
   this.load.image('paddle', '/img/paddle.png');
-  this.load.image('ball', '/img/ball.png');
+  this.load.image('ball', '/img/ball_circle.png');
 
   this.game.time.advancedTiming = true;
 }

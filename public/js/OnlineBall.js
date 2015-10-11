@@ -6,6 +6,8 @@ Pong.Ball = function(game, data) {
   
   this.width = data.w;
   this.height = data.h;
+
+  this.anchor.setTo(0.5, 0.5);
 }
 
 Pong.Ball.prototype = Object.create(Phaser.Sprite.prototype);

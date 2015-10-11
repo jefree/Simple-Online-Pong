@@ -21,7 +21,7 @@ var PLAYER_DATA = [
   {x: GAME_WIDHT-30, y: GAME_HEIGHT-100, w: 30, h: 100}
 ];
 
-var BALL_DATA = { x: 310, y: 230, w: 20, h: 20 };
+var BALL_DATA = { x: 305, y: 225, w: 30, h: 30, r: 15 };
 
 var idCounter = 0;
 var resetBall = false;  //helper to tell user that ball was reseted
@@ -39,7 +39,7 @@ function Game() {
   var players = [];
   var connManager = new ServerConManager(this);
 
-  var fakeLag = 100;
+  var fakeLag = 0;
 
   PLAYER_DATA.forEach(function(data){
     players.push(new Player(data, null, this));
@@ -107,9 +107,15 @@ function Game() {
 
       ball.move(delta);
 
-      if (physics.intersect(ball, players[0]) ||
-          physics.intersect(ball, players[1]))
+      if (physics.intersect(players[0], ball))
       {
+        ball.x = players[0].x+players[0].width+ball.r;
+        ball.vx = -ball.vx;
+      }
+
+      if (physics.intersect(players[1], ball)){
+        
+        ball.x = players[1].x-ball.r;
         ball.vx = -ball.vx;
       }
 
@@ -121,12 +127,12 @@ function Game() {
         players[1].life -= 1;
         newRound();
       }
-      else if (ball.y < 0){
-        ball.y = 0;
+      else if (ball.y < ball.r){
+        ball.y = ball.r;
         ball.vy = -ball.vy;
       }
-      else if (ball.y+ball.height > GAME_HEIGHT) {
-        ball.y = GAME_HEIGHT - ball.height;
+      else if (ball.y+ball.r > GAME_HEIGHT) {
+        ball.y = GAME_HEIGHT - ball.r;
         ball.vy = -ball.vy; 
       }
 
