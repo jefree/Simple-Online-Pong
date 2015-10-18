@@ -3,7 +3,7 @@ function ConnManager(game) {
 
   function connect() {
 
-    socket = io('http://localhost:8080', {reconnection: false});
+    socket = io();
 
     socket.on('welcome', function(gameState){
       console.log('now im connected')
