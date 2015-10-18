@@ -17,6 +17,13 @@ function Vector2(x, y){
     return self.x*vector.x + self.y*vector.y;
   }
 
+  self.multi = function(k){
+    self.x *= k;
+    self.y *= k;
+
+    return self;
+  }
+
   self.normalize = function(){
     var length = Math.sqrt(self.x*self.x + self.y*self.y);
 
@@ -39,8 +46,8 @@ function Vector2(x, y){
   self.perp = function(){
     var perp = new Vector2();
 
-    perp.x = -self.y;
-    perp.y = self.x;
+    perp.x = self.y;
+    perp.y = -self.x;
 
     return perp;
   }

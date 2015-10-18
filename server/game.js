@@ -10,7 +10,7 @@ var GAME_WIDHT = 640;
 var GAME_HEIGHT = 480;
 var STEP_TIME = 0.022;
 
-var FAIL_DELTA = 5; //delta distance for which a player will lose a life if ball enter in his area
+var FAIL_DELTA = 45; //delta distance for which a player will lose a life if ball enter in his area
 var PLAYER_INIT_LIFE = 10;
 
 /*
@@ -107,17 +107,8 @@ function Game() {
 
       ball.move(delta);
 
-      if (physics.intersect(players[0], ball))
-      {
-        ball.x = players[0].x+players[0].width+ball.r;
-        ball.vx = -ball.vx;
-      }
-
-      if (physics.intersect(players[1], ball)){
-        
-        ball.x = players[1].x-ball.r;
-        ball.vx = -ball.vx;
-      }
+      physics.collidePlayerBall(players[0], ball);
+      physics.collidePlayerBall(players[1], ball);
 
       if (ball.x < players[0].width-FAIL_DELTA) {
         players[0].life -= 1; 
@@ -138,7 +129,7 @@ function Game() {
 
       //increase ball velocity
 
-      if (ball.vx <= 200) {
+      if (Math.abs(ball.vx) <= 200) {
         ball.vx = ball.vx + Math.sign(ball.vx)*4*delta; 
         ball.vy = ball.vy + Math.sign(ball.vy)*4*delta; 
       }
@@ -153,8 +144,8 @@ function Game() {
     ball.x = BALL_DATA.x;
     ball.y = BALL_DATA.y;
 
-    ball.vx = 50 * (Math.random()<0.5 ? 1 : -1);
-    ball.vy = 50 * (Math.random()<0.5 ? 1 : -1);
+    ball.vx = 100 * (Math.random()<0.5 ? 1 : -1);
+    ball.vy = 100 * (Math.random()<0.5 ? 1 : -1);
 
     resetBall = true;
   }

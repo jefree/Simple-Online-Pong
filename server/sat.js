@@ -16,7 +16,8 @@ function Shape() {
       var v1 = self.vertices[i];
       var v2 = (i<self.vertices.length-1) ? self.vertices[i+1] : self.vertices[0];
 
-      var axis = v1.subtract(v2);
+      var axis = v2.subtract(v1);
+
       axis = axis.perp().normalize();
 
       self.axes.push(axis);
@@ -62,10 +63,14 @@ function projectCircle(circle, axis){
 
 function overlapProj(proj1, proj2) {
 
-  return (proj1.min > proj2.min && proj1.min < proj2.max) ||
-    (proj1.max > proj2.min && proj1.max < proj2.max) ||
-    (proj2.min > proj1.min && proj2.min < proj1.max) ||
-    (proj2.max > proj1.min && proj2.max < proj1.max);
+  var test1 = proj1.min - proj2.max;
+  var test2 = proj2.min - proj1.max;
+
+  if (test1 > 0 || test2 > 0){
+    return false;
+  }
+
+  return test1;
 }
 
 function distanceSqrBetween(v1, v2){
@@ -95,7 +100,7 @@ function collideAlignedRect(rect1, rect2){
   return true;
 }
 
-function collideRectWithCircle(rect, circle) {
+function collideRectCircle(rect, circle) {
 
   var shape = rectGetVerticesShape(rect);
   shape.calculate_axes();
@@ -121,9 +126,14 @@ function collideRectWithCircle(rect, circle) {
   var circleProj = projectCircle(circle, axis);
   var shapeProj = shape.projection(axis);
 
-  if (!overlapProj(shapeProj, circleProj)){
+  var mvt = axis;
+  var mvtDistance = overlapProj(shapeProj, circleProj);
+
+  if (!mvtDistance){
     return false;
   }
+
+  mvtDistance = Math.abs(mvtDistance);
 
   //check the axes for the rectangle
   for (var i=0; i<shape.axes.length; i++){
@@ -131,13 +141,23 @@ function collideRectWithCircle(rect, circle) {
     var shapeProj = shape.projection(axis);
     var circleProj = projectCircle(circle, axis);
 
-    if (!overlapProj(shapeProj, circleProj)){
+    var overlap = overlapProj(shapeProj, circleProj);
+
+    if (!overlap){
       return false;
+    }
+    else{
+      overlap = Math.abs(overlap);
+
+      if (overlap < mvtDistance){
+        mvt = axis;
+        mvtDistance = overlap;
+      }
     }
   }
 
-  return true;
+  return mvt.multi(mvtDistance);
 }
 
 module.exports.collideAlignedRect = collideAlignedRect;
-module.exports.collideRectWithCircle = collideRectWithCircle;
+module.exports.collideRectCircle = collideRectCircle;
